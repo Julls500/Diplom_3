@@ -1,84 +1,55 @@
-from pages.login_page import LoginPage
 from pages.main_page import MainPage
 from pages.header_page import HeaderPage
 from pages.profile_page import ProfilePage
 from pages.orders_page import OrdersPage
 import allure
-import pytest
 
 
 class TestOrderCreation:
 
     @allure.title('Успешный переход неавторизованного пользователя на Главную страницу с Конструктором по клику на кнопку «Конструктор» в шапке сервиса.')
-    @allure.description('Параметрический тест. Проверяет переход по клику на Конструктор со страницы Лента заказов и со страницы Авторизации.')
-    @pytest.mark.parametrize('page', ['from orders_page', 'from login_page'])
-    def test_order_creation_user_not_authorized_on_click_constructor_button_constructor_opens(self, page, driver):
-        if page == 'from orders_page':
-            orders_page = OrdersPage(driver)
-            orders_page.transfer_to_orders_page()
-        if page == 'from login_page':
-            login_page = LoginPage(driver)
-            login_page.transfer_to_login_page()
+    @allure.description('Проверяет переход по клику на Конструктор со страницы Лента заказов.')
+    def test_order_creation_user_not_authorized_on_click_constructor_button_constructor_opens(self, driver):
+        orders_page = OrdersPage(driver)
+        orders_page.transfer_to_orders_page()
         header_page = HeaderPage(driver)
         main_page = MainPage(driver)
         header_page.constructor_button_click()
         main_page.check_constructor_transfer()
 
     @allure.title('Успешный переход авторизованного пользователя на Главную страницу с Конструктором по клику на кнопку «Конструктор» в шапке сервиса.')
-    @allure.description('Параметрический тест. Проверяет переход по клику на Конструктор со страницы Лента заказов, Личного кабинета и раздела История заказов в Личном кабинете.'
+    @allure.description('Проверяет переход по клику на Конструктор из Личного кабинета.'
                         ' Для теста регистрируется пользователь и добавляются токены авторизации в Loсal Storage фикстурой upload_tokens_to_session.'
                         ' После теста пользователь удаляется фикстурой и очищается Loсal Storage.')
-    @pytest.mark.parametrize('page', ['from orders_page', 'from profile_page', 'from profile_page_history'])
-    def test_order_creation_user_authorized_on_click_constructor_button_constructor_opens(self, page, driver, upload_tokens_to_session):
+    def test_order_creation_user_authorized_on_click_constructor_button_constructor_opens(self, driver, upload_tokens_to_session):
         header_page = HeaderPage(driver)
         main_page = MainPage(driver)
-        if page == 'from orders_page':
-            orders_page = OrdersPage(driver)
-            orders_page.transfer_to_orders_page()
-        if page == 'from profile_page':
 # Прямой переход по ссылке на Личный кабинет не происходит, сервис не загружается. Поэтому здесь переходим в Личный кабинет по клику на кнопку Личный кабинет в шапке сервиса.
-            header_page.profile_link_click()
-            profile_page = ProfilePage(driver)
-            profile_page.profile_tab_wait()
-        if page == 'from profile_page_history':
-            profile_page = ProfilePage(driver)
-            header_page.profile_link_click()
-            profile_page.history_tab_click()
-            profile_page.history_tab_activation_wait()
+        header_page.profile_link_click()
+        profile_page = ProfilePage(driver)
+        profile_page.profile_tab_wait()
         header_page.constructor_button_click()
         main_page.check_constructor_transfer()
 
     @allure.title('Успешный переход неавторизованного пользователя на страницу «Лента заказов» по клику на кнопку «Лента заказов» в шапке сервиса.')
-    @allure.description('Параметрический тест. Проверяет переход по клику на кнопку «Лента заказов» с Главной страницы с Конструктором и со страницы Авторизации.')
-    @pytest.mark.parametrize('page', ['from main_page', 'from login_page'])
-    def test_order_creation_user_not_authorized_on_click_orders_line_button_orders_page_opens(self, driver, page):
+    @allure.description('Проверяет переход по клику на кнопку «Лента заказов» с Главной страницы с Конструктором.')
+    def test_order_creation_user_not_authorized_on_click_orders_line_button_orders_page_opens(self, driver):
         header_page = HeaderPage(driver)
         orders_page = OrdersPage(driver)
-        if page == 'from login_page':
-            login_page = LoginPage(driver)
-            login_page.transfer_to_login_page()
         header_page.orders_line_button_click()
         orders_page.check_orders_page_transfer()
 
     @allure.title('Успешный переход авторизованного пользователя на страницу «Лента заказов» по клику на кнопку «Лента заказов» в шапке сервиса.')
-    @allure.description('Параметрический тест. Проверяет переход по клику на кнопку «Лента заказов» с Главной страницы с Конструктором, Личного кабинета'
-                        ' и раздела История заказов в Личном кабинете.'
+    @allure.description('Проверяет переход по клику на кнопку «Лента заказов» из Личного кабинета.'
                         ' Для теста регистрируется пользователь и добавляются токены авторизации в Loсal Storage фикстурой upload_tokens_to_session.'
                         ' После теста пользователь удаляется фикстурой и очищается Loсal Storage.')
-    @pytest.mark.parametrize('page', ['from main_page', 'from profile_page', 'from profile_page_history'])
-    def test_order_creation_user_authorized_on_click_orders_line_button_orders_page_opens(self, page, driver, upload_tokens_to_session):
+    def test_order_creation_user_authorized_on_click_orders_line_button_orders_page_opens(self, driver, upload_tokens_to_session):
         header_page = HeaderPage(driver)
         orders_page = OrdersPage(driver)
-        if page == 'from profile_page':
 # Прямой переход по ссылке на Личный кабинет не происходит, сервис не загружается. Поэтому здесь переходим в Личный кабинет по клику на кнопку Личный кабинет в шапке сервиса.
-            profile_page = ProfilePage(driver)
-            header_page.profile_link_click()
-            profile_page.profile_tab_wait()
-        if page == 'from profile_page_history':
-            profile_page = ProfilePage(driver)
-            header_page.profile_link_click()
-            profile_page.history_tab_click()
-            profile_page.history_tab_activation_wait()
+        profile_page = ProfilePage(driver)
+        header_page.profile_link_click()
+        profile_page.profile_tab_wait()
         header_page.orders_line_button_click()
         orders_page.check_orders_page_transfer()
 

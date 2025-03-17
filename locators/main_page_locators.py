@@ -16,7 +16,7 @@ class MainPageLocators:
     ing_card_close_button = [By.XPATH, ".//section[@class = 'Modal_modal_opened__3ISw4 Modal_modal__P3_V5']//button"]
     #Конструктор бургера
     burger_constructor = [By.XPATH, ".//span[text() = 'Перетяните булочку сюда (верх)']"]
-    burger_constructor_basket = [By.XPATH, ".//span[@class = 'BurgerConstructor_basket__listContainer__3P_AM']"]
+    burger_constructor_basket = [By.XPATH, ".//ul[@class = 'BurgerConstructor_basket__list__l9dp_']"]
     #Каунтер в карточке ингредиента Флюоресцентная булка R2-D3
     shiny_bun_counter = [By.XPATH, ".//img[@alt = 'Флюоресцентная булка R2-D3']/parent::a//p"]
     #Ингредиент Мясо бессмертных моллюсков Protostomia

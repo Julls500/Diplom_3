@@ -59,13 +59,6 @@ class BasePage:
     def find_elements(self, locator):
         return self.driver.find_elements(*locator)
 
-    @allure.step('Перетащить злемент')
-    def drag_drop_element(self, source_locator, target_locator):
-        source_elem = self.driver.find_element(*source_locator)
-        target_elem = self.driver.find_element(*target_locator)
-        action_chains = ActionChains(self.driver)
-        action_chains.drag_and_drop(source_elem, target_elem).perform()
-
     @allure.step('Ожидание смены текста элемента на новый')
     def wait_elem_text_change(self, locator, text):
         WebDriverWait(self.driver, 10).until(expected_conditions.none_of(
@@ -78,3 +71,44 @@ class BasePage:
     @allure.step('Ожидание смены значения элемента')
     def wait_elem_value_changes(self, locator, value):
         return WebDriverWait(self.driver, 6).until(expected_conditions.text_to_be_present_in_element(locator, value))
+
+    @allure.step('Перетащить элемент')
+    def drag_drop_element(self, source_locator, target_locator):
+        if self.driver.name == 'firefox':
+            source_element = WebDriverWait(self.driver, 10).until(expected_conditions.visibility_of_element_located(source_locator))
+            target_element = WebDriverWait(self.driver, 10).until(expected_conditions.visibility_of_element_located(target_locator))
+            self.driver.execute_script(
+            "function createEvent(typeOfEvent) { " +
+            "var event = document.createEvent('CustomEvent'); " +
+            "event.initCustomEvent(typeOfEvent, true, true, null); " +
+            "event.dataTransfer = { " +
+            "data: {}, " +
+            "setData: function(key, value) { this.data[key] = value; }, " +
+            "getData: function(key) { return this.data[key]; } " +
+            "}; " +
+            "return event; " +
+            "} " +
+            "function dispatchEvent(element, typeOfEvent, event) { " +
+            "if (element.dispatchEvent) { " +
+            "element.dispatchEvent(event); " +
+            "} else if (element.fireEvent) { " +
+            "element.fireEvent('on' + typeOfEvent, event); " +
+            "} " +
+            "} " +
+            "function simulateHTML5DragAndDrop(element, destination) { " +
+            "var dragStartEvent = createEvent('dragstart'); " +
+            "dispatchEvent(element, 'dragstart', dragStartEvent); " +
+            "var dropEvent = createEvent('drop'); " +
+            "dispatchEvent(destination, 'drop', dropEvent); " +
+            "var dragEndEvent = createEvent('dragend'); " +
+            "dispatchEvent(element, 'dragend', dragEndEvent); " +
+            "} " +
+            "simulateHTML5DragAndDrop(arguments[0], arguments[1]);",
+            source_element,
+            target_element
+            )
+        else:
+            source_elem = self.driver.find_element(*source_locator)
+            target_elem = self.driver.find_element(*target_locator)
+            action_chains = ActionChains(self.driver)
+            action_chains.drag_and_drop(source_elem, target_elem).perform()

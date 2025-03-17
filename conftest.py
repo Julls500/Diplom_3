@@ -1,9 +1,8 @@
 import pytest
-from api_client import User
+from api_client import User, Order
 import allure
 from utilites import WebdriverFactory
 from data import Urls
-
 
 def pytest_addoption(parser):
     parser.addoption("--browser", action="store", default="chrome", help="Browser to run tests on")
@@ -24,6 +23,11 @@ def user():
     user = User.register()
     yield user
     User.delete(user.get("accessToken"))
+
+@allure.step('Создание заказа.')
+@pytest.fixture
+def submit_order(user):
+    Order.submit_order(user)
 
 @allure.step('Добавление токенов авторизации в LocalStorage и очистка даных после теста.')
 @pytest.fixture
